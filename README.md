@@ -11,6 +11,8 @@ League, Europa League, and the FIFA World Cup, polled continuously like the
 others. ESPN's own API simply returns nothing for the World Cup outside an
 actual tournament window (there's no special date-gating logic in this app).
 
+Inspired by [this video](https://youtube.com/shorts/fas3RUgIGA4?si=OD20bPoXfSfmffOZ).
+
 ## Install
 
 ```bash
@@ -199,51 +201,16 @@ See `JOURNAL.md` for the full history of what was tried, what broke, and
 why: useful context before changing `NotchWindow/` or `Networking/` in
 particular.
 
-## Distribution (optional, not required to build or run)
+## Distribution
 
-Want people to be able to run `brew install --cask football-notch` the way
-you'd `brew install --cask codexbar`? This is entirely free, no Apple
-Developer account needed, using a well-established pattern for indie/hobby
-Homebrew casks: an ad-hoc signed build, distributed from your own GitHub
-repos, with the Cask automatically stripping macOS's quarantine flag on
-install so people never see a Gatekeeper warning.
-
-1. **Build a release zip** (no signing account, no credentials needed):
-   ```bash
-   Distribution/build_release.sh
-   ```
-   This produces `build/FootballNotch.zip` and prints the `shasum -a 256`
-   command you'll need next.
-
-2. **Publish a GitHub release** on this repo with `build/FootballNotch.zip`
-   attached as a release asset.
-
-3. **Create a separate tap repo** named `homebrew-football-notch`, containing
-   `Casks/football-notch.rb`. Copy `Distribution/Casks/football-notch.rb`
-   into it, filling in your GitHub username, the release version, and the
-   sha256 from step 1.
-
-4. Anyone can then install with either:
-   ```bash
-   brew install --cask <you>/football-notch/football-notch
-   ```
-   or by tapping first:
-   ```bash
-   brew tap <you>/football-notch
-   brew install --cask football-notch
-   ```
-   No Xcode, no Apple account, and no security warning on their end either,
-   since the Cask's `postflight` step already handled that.
-
-None of this is required just to build and use the app yourself.
-
-**If you ever do want a paid Apple Developer ID** ($99/year) later, for a
-properly signed and notarised build instead of ad-hoc signing, `build_release.sh`
-supports that too: copy `Distribution/ExportOptions.plist.template` to
-`Distribution/ExportOptions.plist` (gitignored, since it holds your personal
-Team ID), fill in your Team ID, then run the script with
-`DEVELOPER_ID_APPLICATION` and `NOTARY_PROFILE` set. This is a nice-to-have,
-not a requirement.
+Already published, no Apple Developer account used: an ad-hoc signed build,
+released on GitHub, installed via the
+[homebrew-football-notch](https://github.com/MoSahil147/homebrew-football-notch)
+tap (the `Install` section above). To cut a new release yourself, run
+`Distribution/build_release.sh`, which builds and zips the app and prints
+the checksum needed for the Cask file. See `JOURNAL.md` for the full
+publishing history and `Distribution/` for the scripts and Cask template,
+including the optional paid-Developer-ID signing path.
 
 ## Licence
 
