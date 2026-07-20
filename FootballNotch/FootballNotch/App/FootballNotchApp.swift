@@ -33,15 +33,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         menuBarController = MenuBarController()
 
-        // Demo mode always starts from a blank slate, so every test run
-        // gets the full idle → pick-a-match flow rather than picking up
-        // wherever a previous demo session left off. This only ever touches
-        // the isolated demo suite above, never real usage's storage.
-        // Must happen before `appState` (lazy) is first touched below, since
-        // its initial mode reads store.followedMatchID at construction time.
-        if Self.isDemoMode {
-            store.clear()
-        }
+        // Every launch starts from a blank slate — quitting and reopening
+        // the app always goes back to idle rather than resuming whatever
+        // match was last followed. Must happen before `appState` (lazy) is
+        // first touched below, since its initial mode reads
+        // store.followedMatchID at construction time.
+        store.clear()
 
         polling.onGoalEvent = { [weak appState] event in
             appState?.showGoalAlert(event)

@@ -188,4 +188,52 @@ final class MatchPollingServiceTests: XCTestCase {
         XCTAssertNil(store.followedMatchID)
         XCTAssertNil(service.followedMatch)
     }
+
+    func test_pollOnce_keepsShowingFinishedMatch_withinPostMatchWindow() async {
+        let client = FakeESPNClient()
+        client.matchesBySlug["esp.1"] = [match(home: 1, away: 0)]
+        let store = FollowedMatchStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        let service = MatchPollingService(client: client, store: store)
+        service.follow(matchID: "1")
+        let start = Date()
+        await service.pollOnce(now: start) // establish baseline (still live)
+
+        client.matchesBySlug["esp.1"] = [
+            Match(id: "1", competitionSlug: "esp.1", competitionName: "La Liga",
+                  homeTeam: Team(id: "83", shortName: "BAR", crestURL: nil),
+                  awayTeam: Team(id: "86", shortName: "RMA", crestURL: nil),
+                  homeScore: 1, awayScore: 0, status: .finished)
+        ]
+        await service.pollOnce(now: start) // finishes here
+
+        // Still well within the post-match display window (10 minutes later).
+        await service.pollOnce(now: start.addingTimeInterval(10 * 60))
+
+        XCTAssertEqual(store.followedMatchID, "1")
+        XCTAssertNotNil(service.followedMatch)
+    }
+
+    func test_pollOnce_revertsToIdle_afterPostMatchWindowExpires() async {
+        let client = FakeESPNClient()
+        client.matchesBySlug["esp.1"] = [match(home: 1, away: 0)]
+        let store = FollowedMatchStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        let service = MatchPollingService(client: client, store: store)
+        service.follow(matchID: "1")
+        let start = Date()
+        await service.pollOnce(now: start) // establish baseline (still live)
+
+        client.matchesBySlug["esp.1"] = [
+            Match(id: "1", competitionSlug: "esp.1", competitionName: "La Liga",
+                  homeTeam: Team(id: "83", shortName: "BAR", crestURL: nil),
+                  awayTeam: Team(id: "86", shortName: "RMA", crestURL: nil),
+                  homeScore: 1, awayScore: 0, status: .finished)
+        ]
+        await service.pollOnce(now: start) // finishes here
+
+        // Past the 20-minute post-match display window.
+        await service.pollOnce(now: start.addingTimeInterval(21 * 60))
+
+        XCTAssertNil(store.followedMatchID)
+        XCTAssertNil(service.followedMatch)
+    }
 }

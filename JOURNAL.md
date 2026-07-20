@@ -410,6 +410,97 @@ casks:
 
 ---
 
+## 2026-07-21, continued — Storage isolation, menu bar fix, v0.1.0 published live, product changes
+
+### The real cause of "no emoji in real mode" and "is this hardcoded" — found with real evidence
+
+Both questions had the same root cause. `defaults read com.footballnotch.app`
+showed a real leftover `followedMatchID` (a genuine ESPN match ID from
+earlier testing, not fabricated/hardcoded data) — since demo mode and real
+mode shared the exact same `UserDefaults.standard` domain (same bundle ID
+regardless of how the app was launched), a match followed during demo
+testing leaked into real mode's persistent storage. A later real-mode
+launch would read that stale ID, believe it was still "following" that
+match, and render the compact pill for a match that was never actually
+selected in that session, leaving no idle emoji ever shown. Confirmed by
+directly inspecting (`defaults read`) and clearing (`defaults delete`) the
+domain before fixing properly:
+
+- Demo mode now uses a fully separate `UserDefaults` suite
+  (`com.footballnotch.app.demo`), never touching real storage at all.
+- Additionally, `MatchPollingService` now auto-drops a followed match it
+  can't find in ESPN's data for 3 consecutive polls (a stale ID that's
+  rolled off the API) instead of staying stuck rendering nothing forever.
+
+### Menu bar Quit — real bug found via code, not screenshot
+
+Screenshot-based verification of the ⚽️ status item kept failing (came back
+solid black even over the system's own Wi-Fi/Control Center icons) —
+checked directly whether "Automatically hide and show the menu bar" was the
+cause (`defaults read NSGlobalDomain`); it wasn't, that setting was off.
+Root cause was a real code bug instead: `MenuBarController` didn't inherit
+`NSObject`. Cocoa's target-action mechanism (how `NSMenuItem` clicks
+actually invoke a method) goes through the Objective-C runtime, which a
+plain Swift class doesn't reliably participate in — so the Quit menu item's
+`target = self` wiring was unreliable even though the icon itself could
+still render. Fixed: `final class MenuBarController: NSObject`. User
+confirmed afterward: icon visible, Quit works.
+
+### v0.1.0 published and installed for real
+
+Full distribution pipeline exercised for real, not just tested locally:
+
+- User pushed the source to `MoSahil147/Football-Notch-for-MacBook` (after
+  confirming the actual repo name — it had been renamed from `Dynamic-Island`
+  to `Football-Notch-for-MacBook`; local git remote URL still says the old
+  name but GitHub 301-redirects, so both work).
+- Built the real release zip via `Distribution/build_release.sh`
+  (sha256 `9e184f29d4a179428334f68cd875e77a50bb112557af691e6e3f1304b8d9b7ee`).
+  Published as GitHub Release `v0.1.0` on the main repo via `gh release
+  create` (user approved after initially saying wait/reconsidering once).
+  Downloaded the asset back from GitHub afterward and re-verified its
+  sha256 matched exactly.
+- Created `MoSahil147/homebrew-football-notch` (the Homebrew tap) via `gh
+  repo create`, pushed `Casks/football-notch.rb` + a short README into it.
+- **Ran the actual install command a stranger would run**:
+  `brew install --cask MoSahil147/football-notch/football-notch` — it
+  tapped the repo, downloaded the real release, installed to
+  `/Applications/FootballNotch.app`. Confirmed via `xattr` that no
+  `com.apple.quarantine` flag was present (the Cask's `postflight` worked),
+  and launched it with no Gatekeeper prompt.
+- **Known gap going into the next release**: `v0.1.0` as published does NOT
+  include the `MenuBarController: NSObject` fix above — it predates it.
+  Needs a `v0.1.1` release once the user pushes the fix.
+
+### Product decision: always start idle on launch
+
+Originally, real (non-demo) usage deliberately persisted the followed match
+across app quit/relaunch — considered a feature (don't have to re-pick every
+time). User reconsidered and asked for the opposite: every launch, demo or
+real, should always start fresh at idle, matching demo mode's existing
+"always reset" behaviour. Changed `AppDelegate.applicationDidFinishLaunching`
+to unconditionally call `store.clear()` regardless of mode (previously
+demo-mode-only). Verified behaviourally, not just by reading the code:
+planted a fake `followedMatchID` directly via `defaults write`, launched the
+built app, confirmed via `CGWindowList` it rendered at the small idle-frame
+size (not the tracking size) and via `defaults read` that the domain was
+fully wiped after launch.
+
+### Post-match display window
+
+New feature: instead of a followed match either vanishing the instant it
+finishes or staying displayed forever, the compact pill now keeps showing
+the final score for **20 minutes** after full time, then automatically
+reverts to idle on its own. Implemented via a `finishedAt: Date?` tracked
+per followed match (reset on every new `follow()`/`unfollow()` call) and a
+`pollOnce(now:)` parameter (defaults to `Date()`, injectable for tests) so
+the 20-minute expiry is testable without waiting in real time. This is a
+separate mechanism from the "3 consecutive misses" stale-match safety net —
+that one handles a match ID that's genuinely disappeared from ESPN's data;
+this one handles the normal case of a match legitimately finishing.
+
+---
+
 ## Known open items
 
 - Real player names for goal scorers (needs new ESPN summary parsing).
@@ -432,7 +523,15 @@ casks:
   `lastFiveGames`, `standings`) isn't parsed/shown anywhere yet — only
   `boxscore` stats are used. Discussed adding facts to the team-selection
   popup; not yet scoped to a specific field the user confirmed they want.
-- Task 14 distribution: still needs the user's Apple Developer ID
-  (`DEVELOPER_ID_APPLICATION`), a `Distribution/ExportOptions.plist` with
-  their Team ID, and a `homebrew-football-notch` GitHub tap repo — all
-  account-level actions outside what Claude can do unilaterally.
+- Task 14 distribution: **live**, via the free ad-hoc-signed path (no paid
+  Apple Developer ID used). `v0.1.0` published on
+  `MoSahil147/Football-Notch-for-MacBook`, tap repo
+  `MoSahil147/homebrew-football-notch` live, `brew install --cask
+  MoSahil147/football-notch/football-notch` verified working end-to-end. The
+  paid Developer ID / notarised path remains available but unused.
+- **`v0.1.1` needed**: `v0.1.0` as published predates the
+  `MenuBarController: NSObject` fix, the storage-isolation fix, the
+  always-idle-on-launch change, and the post-match display window — all
+  real, tested code changes sitting locally/pushed to source but not yet
+  built into a new release zip or published. Build and publish once
+  convenient.

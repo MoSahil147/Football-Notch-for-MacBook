@@ -27,6 +27,12 @@ final class MatchPollingService: ObservableObject {
     /// being gone.
     private var consecutiveMissesForFollowed = 0
     private static let missesBeforeAutoUnfollow = 3
+    /// When the followed match was first observed as finished — keeps
+    /// showing the final result for a while after full time instead of
+    /// either vanishing instantly or staying up forever, then reverts to
+    /// idle on its own.
+    private var finishedAt: Date?
+    private static let postMatchDisplayWindow: TimeInterval = 20 * 60
 
     init(client: ESPNClientProtocol, store: FollowedMatchStore) {
         self.client = client
@@ -36,6 +42,7 @@ final class MatchPollingService: ObservableObject {
     func follow(matchID: String) {
         store.followedMatchID = matchID
         followedMatchGoalEvents = []
+        finishedAt = nil
     }
 
     /// Same as follow(matchID:), but also populates `followedMatch`
@@ -50,6 +57,7 @@ final class MatchPollingService: ObservableObject {
         store.followedMatchID = match.id
         followedMatch = match
         followedMatchGoalEvents = []
+        finishedAt = nil
         Task { await refreshStats(for: match) }
     }
 
@@ -64,9 +72,10 @@ final class MatchPollingService: ObservableObject {
         followedMatch = nil
         followedMatchStats = nil
         followedMatchGoalEvents = []
+        finishedAt = nil
     }
 
-    func pollOnce() async {
+    func pollOnce(now: Date = Date()) async {
         var allMatches: [Match] = []
         for slug in ESPNEndpoints.trackedSlugs {
             let competitionName = Self.displayName(for: slug)
@@ -79,7 +88,6 @@ final class MatchPollingService: ObservableObject {
         // Not just strictly-live matches: also anything scheduled to kick
         // off within the next 15 minutes, so the picker shows a match before
         // ESPN itself has flipped its status to live, not only after.
-        let now = Date()
         let displayable = allMatches.filter { $0.isDisplayable(asOf: now) }
         liveMatches = displayable.isEmpty ? liveMatches : displayable
 
@@ -97,6 +105,18 @@ final class MatchPollingService: ObservableObject {
                 }
                 lastKnownByID[followedID] = current
                 followedMatch = current
+
+                // Keep the final result up for a while after full time, then
+                // revert to idle on its own rather than staying up forever
+                // or vanishing the instant the whistle blows.
+                if current.status == .finished {
+                    let observedFinishedAt = finishedAt ?? now
+                    finishedAt = observedFinishedAt
+                    if now.timeIntervalSince(observedFinishedAt) >= Self.postMatchDisplayWindow {
+                        unfollow()
+                        return
+                    }
+                }
 
                 await refreshStats(for: current)
             } else {
