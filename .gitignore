@@ -23,6 +23,7 @@ Package.resolved
 # Secrets / local config
 .env
 *.local.env
+Distribution/ExportOptions.plist
 
 # Claude Code working files (not part of the shipped project)
 .claude/

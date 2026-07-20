@@ -13,19 +13,30 @@ struct FootballNotchApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var notchPanel: NotchPanel?
-    let store = FollowedMatchStore()
+    var menuBarController: MenuBarController?
+    // Demo mode gets its own isolated UserDefaults suite, completely
+    // separate from real usage's persistent storage. Previously both modes
+    // shared the same real UserDefaults.standard domain — a followedMatchID
+    // set while testing in demo mode leaked into real mode's storage, so a
+    // later real (non-demo) launch would start straight into "tracking" a
+    // stale, no-longer-relevant match instead of idle, hiding the emoji
+    // entirely. Isolating storage makes this impossible regardless of how
+    // much back-and-forth testing happens between the two modes.
+    let store = AppDelegate.isDemoMode
+        ? FollowedMatchStore(defaults: UserDefaults(suiteName: "com.footballnotch.app.demo")!)
+        : FollowedMatchStore()
     lazy var polling = MatchPollingService(client: Self.makeClient(), store: store)
     lazy var appState = AppState(isFollowingMatch: { [store] in store.followedMatchID != nil })
     private var modeCancellable: AnyCancellable?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        menuBarController = MenuBarController()
 
-        // Demo mode should always start from a blank slate — real usage
-        // deliberately persists the followed match across launches (that's
-        // the whole point of FollowedMatchStore), but a leftover
-        // followedMatchID from a previous demo run would skip straight past
-        // the idle → pick-a-match flow this mode exists to let you test.
+        // Demo mode always starts from a blank slate, so every test run
+        // gets the full idle → pick-a-match flow rather than picking up
+        // wherever a previous demo session left off. This only ever touches
+        // the isolated demo suite above, never real usage's storage.
         // Must happen before `appState` (lazy) is first touched below, since
         // its initial mode reads store.followedMatchID at construction time.
         if Self.isDemoMode {

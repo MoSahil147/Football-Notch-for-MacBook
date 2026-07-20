@@ -346,6 +346,70 @@ whole-panel offset, not reverted.
 
 ---
 
+## 2026-07-21 — README polish, menu bar quit control, early-match display, free distribution
+
+### README and repo naming
+
+- Rewritten in British English, em dashes removed throughout.
+- Retitled to "Football Notch for MacBook"; clone instructions corrected to
+  the real repo name, `Football-Notch-for-MacBook` (not the local folder
+  name `Dynamic-Island`, which was never the actual repo name).
+- Added instructions for getting Xcode itself (Mac App Store, or the
+  `xcodes` CLI via Homebrew) — confirmed there is no plain `brew install
+  xcode`, since Apple doesn't allow Xcode to be redistributed that way.
+
+### Menu bar Quit control
+
+The app is `LSUIElement` (no Dock icon, no window, no ⌘Tab presence) by
+design, which meant there was genuinely no way to quit it once running short
+of Activity Monitor or `killall`. Added `MenuBarController` (a minimal
+`NSStatusItem` showing "⚽️" with a "Quit Football Notch" menu item) — kept
+intentionally small, the notch panel itself remains the whole UI. Visual
+confirmation attempted via screenshot; came back solid black across the
+entire menu bar row, including where the system's own Wi-Fi/Control Center
+icons should be, which points to "Automatically hide and show the menu bar"
+being enabled rather than a real bug in the status item itself (a genuine
+blind spot for screenshot-based verification here) — still needs the user's
+own visual confirmation.
+
+### Matches now show up 15 minutes before kickoff, not only once live
+
+Previously `MatchPollingService` only surfaced matches with `status ==
+.live`, so anything ESPN still had marked `scheduled` was invisible until
+ESPN itself flipped the status, even if kickoff was seconds away. Added
+`Match.isDisplayable(asOf:upcomingWindow:)`: true if live, or scheduled
+within 15 minutes of `now` (parameterised for testability, not reading the
+wall clock internally). This is the one piece of behaviour that had
+genuinely differed between demo mode and real data; now identical. Verified
+live against ESPN's real API that this correctly still shows nothing right
+now (earliest real fixture remains mid-August).
+
+### Distribution: free path, no Apple Developer account
+
+The user asked directly whether paying for an Apple Developer ID could be
+avoided. It can, via a pattern already common among free/hobby Homebrew
+casks:
+
+- `Distribution/build_release.sh` restructured so the **default** path
+  (no `DEVELOPER_ID_APPLICATION` set) does a plain `xcodebuild ... build`
+  (ad-hoc signed, same as every local build — no account, no credentials,
+  nothing paid) and zips the product directly, skipping the
+  archive/export/notarise machinery entirely. The paid Developer ID +
+  notarisation path still exists but is now clearly optional, not the
+  primary flow.
+- `Distribution/Casks/football-notch.rb` gained a `postflight do ... end`
+  block running `xattr -cr` on the installed `.app` — this strips macOS's
+  quarantine attribute automatically as part of `brew install --cask`,
+  before the user ever opens the app, so an ad-hoc-signed (not
+  Apple-notarised) build never shows Gatekeeper's "unidentified developer"
+  warning to the end user.
+- **Verified end-to-end, not just assumed**: ran `build_release.sh` with no
+  Developer ID set, unzipped the output, ran the exact `xattr -cr` command
+  the Cask's postflight will run, and launched it — confirmed running with
+  no Gatekeeper prompt.
+
+---
+
 ## Known open items
 
 - Real player names for goal scorers (needs new ESPN summary parsing).

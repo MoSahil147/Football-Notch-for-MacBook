@@ -60,6 +60,38 @@ final class MatchPollingServiceTests: XCTestCase {
         XCTAssertEqual(service.liveMatches.count, 1)
     }
 
+    func test_pollOnce_includesMatchesKickingOffWithin15Minutes() async {
+        let client = FakeESPNClient()
+        let upcoming = Match(id: "2", competitionSlug: "esp.1", competitionName: "La Liga",
+                              homeTeam: Team(id: "1", shortName: "ATM", crestURL: nil),
+                              awayTeam: Team(id: "2", shortName: "SEV", crestURL: nil),
+                              homeScore: 0, awayScore: 0,
+                              status: .scheduled(Date().addingTimeInterval(10 * 60)))
+        client.matchesBySlug["esp.1"] = [upcoming]
+        let store = FollowedMatchStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        let service = MatchPollingService(client: client, store: store)
+
+        await service.pollOnce()
+
+        XCTAssertEqual(service.liveMatches, [upcoming])
+    }
+
+    func test_pollOnce_excludesMatchesScheduledMoreThan15MinutesOut() async {
+        let client = FakeESPNClient()
+        let farOff = Match(id: "2", competitionSlug: "esp.1", competitionName: "La Liga",
+                            homeTeam: Team(id: "1", shortName: "ATM", crestURL: nil),
+                            awayTeam: Team(id: "2", shortName: "SEV", crestURL: nil),
+                            homeScore: 0, awayScore: 0,
+                            status: .scheduled(Date().addingTimeInterval(60 * 60)))
+        client.matchesBySlug["esp.1"] = [farOff]
+        let store = FollowedMatchStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        let service = MatchPollingService(client: client, store: store)
+
+        await service.pollOnce()
+
+        XCTAssertTrue(service.liveMatches.isEmpty)
+    }
+
     func test_pollOnce_firesGoalEventWhenFollowedMatchScoreIncreases() async {
         let client = FakeESPNClient()
         client.matchesBySlug["esp.1"] = [match(home: 0, away: 0)]
@@ -122,5 +154,38 @@ final class MatchPollingServiceTests: XCTestCase {
         receivedOutcome = nil
         await service.pollOnce()
         XCTAssertNil(receivedOutcome)
+    }
+
+    func test_pollOnce_toleratesOneOrTwoMissesForFollowedMatch_withoutUnfollowing() async {
+        let client = FakeESPNClient()
+        client.matchesBySlug["esp.1"] = [match(home: 0, away: 0)]
+        let store = FollowedMatchStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        let service = MatchPollingService(client: client, store: store)
+        service.follow(matchID: "1")
+        await service.pollOnce() // establish baseline (found)
+
+        // Two consecutive misses — a likely transient blip, not "gone".
+        client.matchesBySlug["esp.1"] = []
+        await service.pollOnce()
+        await service.pollOnce()
+
+        XCTAssertEqual(store.followedMatchID, "1")
+    }
+
+    func test_pollOnce_autoUnfollowsAfterThreeConsecutiveMisses() async {
+        let client = FakeESPNClient()
+        client.matchesBySlug["esp.1"] = [match(home: 0, away: 0)]
+        let store = FollowedMatchStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+        let service = MatchPollingService(client: client, store: store)
+        service.follow(matchID: "1")
+        await service.pollOnce() // establish baseline (found)
+
+        client.matchesBySlug["esp.1"] = []
+        await service.pollOnce()
+        await service.pollOnce()
+        await service.pollOnce() // 3rd consecutive miss
+
+        XCTAssertNil(store.followedMatchID)
+        XCTAssertNil(service.followedMatch)
     }
 }

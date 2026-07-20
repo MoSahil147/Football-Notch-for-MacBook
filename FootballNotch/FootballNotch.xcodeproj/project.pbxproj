@@ -40,6 +40,7 @@
 		C906B2924A76E615C0C7BFBD /* HoverExpandedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CFBB6AAB2E8284D4B0BD15 /* HoverExpandedView.swift */; };
 		CA24B3BB921F16C3B729C17C /* ESPNDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BC7A8E16791638600D4BF /* ESPNDecodingTests.swift */; };
 		E0CB5C65751269D8FEF2F85E /* NotchPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2D42B41A31ABF136B74F9B /* NotchPanelTests.swift */; };
+		E2FF37414471F8D683EBCC11 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F10DFA2DC1C465F47EDB66 /* MenuBarController.swift */; };
 		E890D0242D46AD0944458247 /* ESPNSummaryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D366D01B2D3D1C1DCDD94E0 /* ESPNSummaryResponse.swift */; };
 		ED903E4ED83B38D2DF24FBCB /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1DBB01413A0361B9CD4D23 /* Match.swift */; };
 		ED91996EC445EDC0AC72B7BA /* MatchOutcomeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A52ADB314144F3CE08C35 /* MatchOutcomeDetectorTests.swift */; };
@@ -98,6 +99,7 @@
 		BB1DBB01413A0361B9CD4D23 /* Match.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Match.swift; sourceTree = "<group>"; };
 		BBA1D6E958398AAEC8AC5386 /* MatchPollingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchPollingServiceTests.swift; sourceTree = "<group>"; };
 		BC97E3B9AA0D916E6BB72D78 /* NotchRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchRootView.swift; sourceTree = "<group>"; };
+		C2F10DFA2DC1C465F47EDB66 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		DD706C514814442DE323FC63 /* GoalDiffDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDiffDetectorTests.swift; sourceTree = "<group>"; };
 		FD2D42B41A31ABF136B74F9B /* NotchPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanelTests.swift; sourceTree = "<group>"; };
 		FF11E27D1A523BE199A91EAA /* ESPNEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ESPNEndpoints.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 			children = (
 				1E581F895FC9286C5BAB1CD7 /* AppState.swift */,
 				7727B2C23C6612B337C78AA8 /* FootballNotchApp.swift */,
+				C2F10DFA2DC1C465F47EDB66 /* MenuBarController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 				EF975FEA2694C3B9580C5F8A /* MatchPickerRow.swift in Sources */,
 				6C345CF4351313C1F915B787 /* MatchPollingService.swift in Sources */,
 				8F6E768AF39C534CF5D40CFE /* MatchStats.swift in Sources */,
+				E2FF37414471F8D683EBCC11 /* MenuBarController.swift in Sources */,
 				2BA628CCCF6744C55E1FA1C9 /* NotchGeometry.swift in Sources */,
 				9AEC1E8F4A84D342C0FDFAE4 /* NotchPanel.swift in Sources */,
 				39CEBE39C4C37AAFC8CAD390 /* NotchRootView.swift in Sources */,
