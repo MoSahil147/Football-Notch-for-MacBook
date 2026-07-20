@@ -11,6 +11,22 @@ League, Europa League, and the FIFA World Cup, polled continuously like the
 others. ESPN's own API simply returns nothing for the World Cup outside an
 actual tournament window (there's no special date-gating logic in this app).
 
+## Install
+
+```bash
+brew install --cask MoSahil147/football-notch/football-notch
+```
+
+or tap first:
+
+```bash
+brew tap MoSahil147/football-notch
+brew install --cask football-notch
+```
+
+No Xcode, no Apple Developer account, and no security warning needed on
+your end, everything below this is only for building from source instead.
+
 ## Requirements
 
 - A **notched MacBook**: MacBook Pro 14"/16" (2021+) or MacBook Air
