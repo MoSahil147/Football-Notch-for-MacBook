@@ -11,7 +11,8 @@ struct IdleIndicatorView: View {
                 .font(.system(size: 13))
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 8)
+        .padding(.leading, 4)
+        .padding(.trailing, 8)
         .frame(height: 32)
         .background(Color.black)
         .clipShape(Capsule())

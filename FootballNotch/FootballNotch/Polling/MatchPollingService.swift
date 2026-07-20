@@ -5,8 +5,15 @@ final class MatchPollingService: ObservableObject {
     @Published private(set) var liveMatches: [Match] = []
     @Published private(set) var followedMatch: Match?
     @Published private(set) var followedMatchStats: MatchStats?
+    /// Team-level goal log for the followed match (who scored, not the
+    /// scorer's name — ESPN's summary endpoint isn't parsed for individual
+    /// scorers yet, so this is the "who scored" info available today).
+    @Published private(set) var followedMatchGoalEvents: [GoalEvent] = []
 
     var onGoalEvent: ((GoalEvent) -> Void)?
+    /// Fires once, the moment the followed match transitions to finished —
+    /// distinct from onGoalEvent, which fires per-goal during play.
+    var onMatchFinished: ((MatchOutcome) -> Void)?
 
     private let client: ESPNClientProtocol
     private let store: FollowedMatchStore
@@ -20,12 +27,35 @@ final class MatchPollingService: ObservableObject {
 
     func follow(matchID: String) {
         store.followedMatchID = matchID
+        followedMatchGoalEvents = []
+    }
+
+    /// Same as follow(matchID:), but also populates `followedMatch`
+    /// immediately from data the caller already has (the match the user just
+    /// tapped in the picker) instead of leaving it nil until the next poll
+    /// cycle — without this, the compact pill has nothing to render for up
+    /// to `activeInterval` seconds right after confirming a match. Also
+    /// kicks off an immediate stats fetch for the same reason — otherwise
+    /// followedMatchStats stays nil (no stats shown at all) until the next
+    /// scheduled poll, up to activeInterval seconds later.
+    func follow(_ match: Match) {
+        store.followedMatchID = match.id
+        followedMatch = match
+        followedMatchGoalEvents = []
+        Task { await refreshStats(for: match) }
+    }
+
+    private func refreshStats(for match: Match) async {
+        if let stats = try? await client.fetchStats(competitionSlug: match.competitionSlug, eventID: match.id) {
+            followedMatchStats = stats
+        }
     }
 
     func unfollow() {
         store.clear()
         followedMatch = nil
         followedMatchStats = nil
+        followedMatchGoalEvents = []
     }
 
     func pollOnce() async {
@@ -45,14 +75,17 @@ final class MatchPollingService: ObservableObject {
            let current = allMatches.first(where: { $0.id == followedID }) {
             let previous = lastKnownByID[followedID]
             if let event = GoalDiffDetector.detectGoal(previous: previous, current: current) {
+                followedMatchGoalEvents.append(event)
                 onGoalEvent?(event)
+            }
+            if previous?.status != .finished,
+               let outcome = MatchOutcomeDetector.outcome(for: current, supportedTeamID: store.supportedTeamID) {
+                onMatchFinished?(outcome)
             }
             lastKnownByID[followedID] = current
             followedMatch = current
 
-            if let stats = try? await client.fetchStats(competitionSlug: current.competitionSlug, eventID: current.id) {
-                followedMatchStats = stats
-            }
+            await refreshStats(for: current)
         }
     }
 

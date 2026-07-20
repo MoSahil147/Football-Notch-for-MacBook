@@ -2,11 +2,11 @@ import XCTest
 @testable import FootballNotch
 
 final class GoalSoundPlayerTests: XCTestCase {
-    func test_soundFileName_forSupportedTeam_isCelebration() {
-        XCTAssertEqual(GoalSoundPlayer.soundFileName(isForSupportedTeam: true), "goal_celebration.caf")
+    func test_systemSoundName_forSupportedTeam_isHero() {
+        XCTAssertEqual(GoalSoundPlayer.systemSoundName(isForSupportedTeam: true), "Hero")
     }
 
-    func test_soundFileName_forOpponent_isConcede() {
-        XCTAssertEqual(GoalSoundPlayer.soundFileName(isForSupportedTeam: false), "goal_concede.caf")
+    func test_systemSoundName_forOpponent_isBasso() {
+        XCTAssertEqual(GoalSoundPlayer.systemSoundName(isForSupportedTeam: false), "Basso")
     }
 }

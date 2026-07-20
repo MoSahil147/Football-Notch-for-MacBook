@@ -6,28 +6,34 @@ final class NotchPanel: NSPanel {
     static let mouseExitedNotification = Notification.Name("NotchPanel.mouseExited")
 
     enum VisualState {
-        case resting
+        case idle
+        case compact
         case expanded
     }
 
     // Physical layout matched to a real-device spec rather than derived from
-    // measured content size: the pill's top edge sits a fixed physical
-    // distance below the screen's top edge (the same row the camera notch
-    // occupies), and expands downward + sideways to an exact physical block
-    // on hover. Fixed target frames (vs. the earlier content-driven
-    // measure->resize->re-measure loop) is also what fixed the flicker and
+    // measured content size: the pill's top edge sits flush with the
+    // screen's real top edge (the same row the camera notch occupies), and
+    // expands downward + sideways to an exact physical block on hover. Fixed
+    // target frames (vs. the earlier content-driven measure->resize->
+    // re-measure loop) is also what fixed the flicker and
     // hover-breaking-after-first-cycle bugs.
-    private static let topInsetCM: CGFloat = 1
     private static let expandedHeightCM: CGFloat = 4
     private static let expandedSideMarginCM: CGFloat = 2
-    // Resting state isn't given a physical spec — it only needs enough
-    // overflow past the notch's dead-pixel cutout for the idle emoji (at the
-    // left edge) to land on real, visible pixels.
-    private static let restingSideMarginPoints: CGFloat = 20
+    // Idle (nothing tracked): just enough overflow past the notch's
+    // dead-pixel cutout for the emoji to land on visible pixels — kept
+    // small and tight to the camera, matching the original look.
+    private static let idleSideMarginPoints: CGFloat = 20
+    // Compact (a match is being tracked): enough room for "HOME vs AWAY" on
+    // the left and a score on the right, split around the dead zone. Left is
+    // wider than right since team-name text needs more room than a score.
+    private static let compactLeftMarginPoints: CGFloat = 90
+    private static let compactRightMarginPoints: CGFloat = 55
 
-    private var restingFrame: CGRect = .zero
+    private var idleFrame: CGRect = .zero
+    private var compactFrame: CGRect = .zero
     private var expandedFrame: CGRect = .zero
-    private var currentState: VisualState = .resting
+    private var currentState: VisualState = .idle
 
     // NSTrackingArea's mouseEntered/mouseExited delivery turned out unreliable
     // on a borderless, non-activating, .screenSaver-level panel like this one
@@ -56,15 +62,26 @@ final class NotchPanel: NSPanel {
             return NotchGeometry.points(fromCM: cm, on: screen)
         }
 
-        let topY = screenFrame.maxY - points(fromCM: topInsetCM)
+        // Flush with the screen's real top edge — the same position the
+        // physical notch cutout itself starts at, so the pill sits directly
+        // at/around the camera instead of appearing to hang below it.
+        let topY = screenFrame.maxY
 
-        let restingWidth = cutout.width + 2 * restingSideMarginPoints
-        let restingHeight = cutout.height
-        let restingFrame = CGRect(
-            x: cutout.midX - restingWidth / 2,
-            y: topY - restingHeight,
-            width: restingWidth,
-            height: restingHeight
+        let idleWidth = cutout.width + 2 * idleSideMarginPoints
+        let idleHeight = cutout.height
+        let idleFrame = CGRect(
+            x: cutout.midX - idleWidth / 2,
+            y: topY - idleHeight,
+            width: idleWidth,
+            height: idleHeight
+        )
+
+        let compactHeight = cutout.height
+        let compactFrame = CGRect(
+            x: cutout.minX - compactLeftMarginPoints,
+            y: topY - compactHeight,
+            width: cutout.width + compactLeftMarginPoints + compactRightMarginPoints,
+            height: compactHeight
         )
 
         let expandedWidth = cutout.width + 2 * points(fromCM: expandedSideMarginCM)
@@ -77,7 +94,7 @@ final class NotchPanel: NSPanel {
         )
 
         let panel = NotchPanel(
-            contentRect: restingFrame,
+            contentRect: idleFrame,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -89,27 +106,34 @@ final class NotchPanel: NSPanel {
         panel.isOpaque = false
         panel.hasShadow = false
         panel.ignoresMouseEvents = false
-        panel.restingFrame = restingFrame
+        // NSPanel (unlike NSWindow) defaults hidesOnDeactivate to true, which
+        // silently hides this panel any time FootballNotch isn't the
+        // frontmost app — i.e. almost always, for a background utility. That
+        // was the real cause of the panel appearing to "belong" to whichever
+        // app was active instead of staying independently on screen.
+        panel.hidesOnDeactivate = false
+        panel.idleFrame = idleFrame
+        panel.compactFrame = compactFrame
         panel.expandedFrame = expandedFrame
 
         let hosting = ClickThroughHostingView(rootView: content.frame(maxWidth: .infinity, maxHeight: .infinity))
         hosting.sizingOptions = []
         hosting.autoresizingMask = [.width, .height]
-        hosting.frame = CGRect(origin: .zero, size: restingFrame.size)
+        hosting.frame = CGRect(origin: .zero, size: idleFrame.size)
         panel.contentView = hosting
-        panel.setFrame(restingFrame, display: true)
+        panel.setFrame(idleFrame, display: true)
         panel.orderFrontRegardless()
         panel.startHoverPolling()
         return panel
     }
 
-    /// Switches between the resting (notch-row) and expanded (hover) physical
-    /// frames. The app layer maps its own display mode to one of these two
-    /// states — NotchPanel itself stays football-agnostic.
+    /// Switches between the three physical frames (idle / compact / expanded).
+    /// The app layer maps its own display mode onto one of these — NotchPanel
+    /// itself stays football-agnostic.
     func setVisualState(_ state: VisualState, animated: Bool = true) {
         guard state != currentState else { return }
         currentState = state
-        let target = state == .resting ? restingFrame : expandedFrame
+        let target = frame(for: state)
         if animated {
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = 0.28
@@ -118,6 +142,14 @@ final class NotchPanel: NSPanel {
             }
         } else {
             setFrame(target, display: true)
+        }
+    }
+
+    private func frame(for state: VisualState) -> CGRect {
+        switch state {
+        case .idle: return idleFrame
+        case .compact: return compactFrame
+        case .expanded: return expandedFrame
         }
     }
 
@@ -133,10 +165,10 @@ final class NotchPanel: NSPanel {
     }
 
     private func pollMouseLocation() {
-        // Test against whichever frame is the CURRENT target state (resting
-        // or expanded), not the panel's mid-animation frame, so hover
-        // detection doesn't flicker while the resize animation is running.
-        let target = currentState == .resting ? restingFrame : expandedFrame
+        // Test against whichever frame is the CURRENT target state, not the
+        // panel's mid-animation frame, so hover detection doesn't flicker
+        // while the resize animation is running.
+        let target = frame(for: currentState)
         let isInside = target.contains(NSEvent.mouseLocation)
         guard isInside != isMouseInsideNotch else { return }
         isMouseInsideNotch = isInside

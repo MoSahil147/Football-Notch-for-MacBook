@@ -32,6 +32,12 @@ struct ESPNCompetitor: Decodable {
 struct ESPNTeam: Decodable {
     let id: String
     let abbreviation: String?
+    // ESPN's real scoreboard payload uses a single "logo" string field, not
+    // a "logos" array — verified against the live API on 2026-07-20 (the
+    // array shape doesn't appear on this endpoint at all). Keeping `logos`
+    // too since other ESPN endpoints/sports have been seen using the array
+    // form; toMatches() below prefers `logo` and falls back to `logos`.
+    let logo: String?
     let logos: [ESPNLogo]?
 }
 
@@ -49,7 +55,8 @@ extension ESPNScoreboardResponse {
             }
 
             func team(from competitor: ESPNCompetitor) -> Team {
-                let crest = competitor.team.logos?.first.flatMap { URL(string: $0.href) }
+                let crest = competitor.team.logo.flatMap(URL.init(string:))
+                    ?? competitor.team.logos?.first.flatMap { URL(string: $0.href) }
                 return Team(
                     id: competitor.team.id,
                     shortName: competitor.team.abbreviation ?? "?",

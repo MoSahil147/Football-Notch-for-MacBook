@@ -49,4 +49,22 @@ final class ESPNDecodingTests: XCTestCase {
         XCTAssertEqual(matches.first?.homeTeam.crestURL, nil)
         XCTAssertEqual(matches.first?.status, .finished)
     }
+
+    /// Regression test for the real shape of ESPN's live scoreboard API,
+    /// verified 2026-07-20 against https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard —
+    /// team crest is a single "logo" string field, NOT a "logos" array (the
+    /// array shape this decoder originally assumed doesn't appear here at
+    /// all, so crests were silently never loading from real data).
+    func test_decodesScoreboard_usesSingularLogoField_matchingRealAPIShape() throws {
+        let json = """
+        {"events":[{"id":"401879301","status":{"type":{"state":"pre"}},"competitions":[{"competitors":[
+          {"homeAway":"home","score":"0","team":{"id":"359","abbreviation":"ARS","logo":"https://a.espncdn.com/i/teamlogos/soccer/500/359.png"}},
+          {"homeAway":"away","score":"0","team":{"id":"388","abbreviation":"COV","logo":"https://a.espncdn.com/i/teamlogos/soccer/500/388.png"}}
+        ]}]}]}
+        """.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(ESPNScoreboardResponse.self, from: json)
+        let matches = decoded.toMatches(competitionName: "Premier League", competitionSlug: "eng.1")
+        XCTAssertEqual(matches.first?.homeTeam.crestURL, URL(string: "https://a.espncdn.com/i/teamlogos/soccer/500/359.png"))
+        XCTAssertEqual(matches.first?.awayTeam.crestURL, URL(string: "https://a.espncdn.com/i/teamlogos/soccer/500/388.png"))
+    }
 }

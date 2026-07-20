@@ -13,6 +13,7 @@
 		144F149BF328481DEA269037 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50260D5EAA3BF494D64C471C /* StatsView.swift */; };
 		2593A9F840313A4A12C2A71C /* GoalDiffDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD706C514814442DE323FC63 /* GoalDiffDetectorTests.swift */; };
 		2BA628CCCF6744C55E1FA1C9 /* NotchGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B156AF2A30D1634085A2D0D0 /* NotchGeometry.swift */; };
+		2C4B21ABBFFB0BD436E22940 /* MatchOutcomeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6FE7732807917D7BD0DECA /* MatchOutcomeDetector.swift */; };
 		2C5CD3BA31E41FF5202B0819 /* GoalAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A6997C8A1B30945158EAED /* GoalAlertView.swift */; };
 		39CEBE39C4C37AAFC8CAD390 /* NotchRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC97E3B9AA0D916E6BB72D78 /* NotchRootView.swift */; };
 		43A31ECC13523948A4C63A42 /* CrestCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B86544788B4E5A909F5F960 /* CrestCache.swift */; };
@@ -21,6 +22,7 @@
 		54EB97F8F11781130E38971F /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E581F895FC9286C5BAB1CD7 /* AppState.swift */; };
 		566E335B0F433E948ABD6B4A /* ESPNEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF11E27D1A523BE199A91EAA /* ESPNEndpoints.swift */; };
 		5B1CB16EECAF00AAD3E0548B /* FollowedMatchStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1973843715D0305F6EE8F4A4 /* FollowedMatchStoreTests.swift */; };
+		5BBC38F3B5C972B22103B47D /* DemoESPNClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308130526D53887EA7E07B14 /* DemoESPNClient.swift */; };
 		5DFE6A42AC791435129C066E /* GoalSoundPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2720346F99F3640C1D3B726B /* GoalSoundPlayerTests.swift */; };
 		6586B34175B5046B8105E89E /* CrestCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DCC9ACEA260A14F378C1EF /* CrestCacheTests.swift */; };
 		68A0F247E76476FA69D8FFFB /* MatchModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3A178CC4E4A07C991FEDC /* MatchModelTests.swift */; };
@@ -33,12 +35,14 @@
 		9CC574B7FBBE4D374B031B46 /* FootballNotchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7727B2C23C6612B337C78AA8 /* FootballNotchApp.swift */; };
 		9ECC38195F39D1890E78A024 /* ESPNClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C7048107FD4325E601FBC7 /* ESPNClientTests.swift */; };
 		A56F7FBAB9C79031C0394258 /* IdleIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64AA46F514F75EB00DA87531 /* IdleIndicatorView.swift */; };
+		A8724193251DCE985D508446 /* UISoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E7CDF1AA103EACF3E40F47 /* UISoundPlayer.swift */; };
 		C667ABC4F16FBFF835E285CF /* ESPNClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B954A931EFB0C1263C3BA01F /* ESPNClient.swift */; };
 		C906B2924A76E615C0C7BFBD /* HoverExpandedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CFBB6AAB2E8284D4B0BD15 /* HoverExpandedView.swift */; };
 		CA24B3BB921F16C3B729C17C /* ESPNDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BC7A8E16791638600D4BF /* ESPNDecodingTests.swift */; };
 		E0CB5C65751269D8FEF2F85E /* NotchPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2D42B41A31ABF136B74F9B /* NotchPanelTests.swift */; };
 		E890D0242D46AD0944458247 /* ESPNSummaryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D366D01B2D3D1C1DCDD94E0 /* ESPNSummaryResponse.swift */; };
 		ED903E4ED83B38D2DF24FBCB /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1DBB01413A0361B9CD4D23 /* Match.swift */; };
+		ED91996EC445EDC0AC72B7BA /* MatchOutcomeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A52ADB314144F3CE08C35 /* MatchOutcomeDetectorTests.swift */; };
 		EF975FEA2694C3B9580C5F8A /* MatchPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD893A803195F1E4F0DFB5C /* MatchPickerRow.swift */; };
 		F28465F728A09C227E1E2D02 /* NotchGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80208A19F0EC592DDBEB5833 /* NotchGeometryTests.swift */; };
 		F3EEFB7737D501DD9EDA9BF8 /* ESPNScoreboardResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE3E247FA15AD49EB057ACE /* ESPNScoreboardResponse.swift */; };
@@ -55,6 +59,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0A0A52ADB314144F3CE08C35 /* MatchOutcomeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchOutcomeDetectorTests.swift; sourceTree = "<group>"; };
 		0B86544788B4E5A909F5F960 /* CrestCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrestCache.swift; sourceTree = "<group>"; };
 		1973843715D0305F6EE8F4A4 /* FollowedMatchStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowedMatchStoreTests.swift; sourceTree = "<group>"; };
 		1E581F895FC9286C5BAB1CD7 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -62,6 +67,7 @@
 		2BCFF997DC3C6F7CA2E75D32 /* GoalDiffDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDiffDetector.swift; sourceTree = "<group>"; };
 		2C1F2462671AA33B3C386CC1 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		2E119D7E6B54183E4C68B1B5 /* GoalSoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalSoundPlayer.swift; sourceTree = "<group>"; };
+		308130526D53887EA7E07B14 /* DemoESPNClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoESPNClient.swift; sourceTree = "<group>"; };
 		323789F7351BBA84F63CF9E6 /* NotchPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanel.swift; sourceTree = "<group>"; };
 		431B23E69C2A51FA5593F519 /* FootballNotchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FootballNotchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48A6997C8A1B30945158EAED /* GoalAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalAlertView.swift; sourceTree = "<group>"; };
@@ -77,10 +83,12 @@
 		7727B2C23C6612B337C78AA8 /* FootballNotchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballNotchApp.swift; sourceTree = "<group>"; };
 		7AC830A5559965D926ED0FA0 /* MatchStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStats.swift; sourceTree = "<group>"; };
 		7B0664A3035189533BC14603 /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
+		7C6FE7732807917D7BD0DECA /* MatchOutcomeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchOutcomeDetector.swift; sourceTree = "<group>"; };
 		80208A19F0EC592DDBEB5833 /* NotchGeometryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchGeometryTests.swift; sourceTree = "<group>"; };
 		81C7048107FD4325E601FBC7 /* ESPNClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ESPNClientTests.swift; sourceTree = "<group>"; };
 		8D1F9F68915168382E859918 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DE3E247FA15AD49EB057ACE /* ESPNScoreboardResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ESPNScoreboardResponse.swift; sourceTree = "<group>"; };
+		90E7CDF1AA103EACF3E40F47 /* UISoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISoundPlayer.swift; sourceTree = "<group>"; };
 		930AAD3954C3D77AF44A24F6 /* FootballNotch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FootballNotch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB1BC7A8E16791638600D4BF /* ESPNDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ESPNDecodingTests.swift; sourceTree = "<group>"; };
 		ADBD54FA45584C524BF4E678 /* FollowedMatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowedMatchStore.swift; sourceTree = "<group>"; };
@@ -120,6 +128,7 @@
 				8D1F9F68915168382E859918 /* Info.plist */,
 				C08AFC17D344ECBA773F823C /* App */,
 				C9C546BC1AE579126BF8DBC8 /* Audio */,
+				965D689511CFBD54475245A6 /* Debug */,
 				CC22C0CB967AC8054EE6D054 /* Models */,
 				594688ADB242494F27501C77 /* Networking */,
 				39D72A5962BE372D89FFD399 /* NotchWindow */,
@@ -145,9 +154,18 @@
 			isa = PBXGroup;
 			children = (
 				2BCFF997DC3C6F7CA2E75D32 /* GoalDiffDetector.swift */,
+				7C6FE7732807917D7BD0DECA /* MatchOutcomeDetector.swift */,
 				64BC67E27ADF482FBAFB7435 /* MatchPollingService.swift */,
 			);
 			path = Polling;
+			sourceTree = "<group>";
+		};
+		965D689511CFBD54475245A6 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				308130526D53887EA7E07B14 /* DemoESPNClient.swift */,
+			);
+			path = Debug;
 			sourceTree = "<group>";
 		};
 		C08AFC17D344ECBA773F823C /* App */ = {
@@ -172,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				2E119D7E6B54183E4C68B1B5 /* GoalSoundPlayer.swift */,
+				90E7CDF1AA103EACF3E40F47 /* UISoundPlayer.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -212,6 +231,7 @@
 				DD706C514814442DE323FC63 /* GoalDiffDetectorTests.swift */,
 				2720346F99F3640C1D3B726B /* GoalSoundPlayerTests.swift */,
 				57C3A178CC4E4A07C991FEDC /* MatchModelTests.swift */,
+				0A0A52ADB314144F3CE08C35 /* MatchOutcomeDetectorTests.swift */,
 				BBA1D6E958398AAEC8AC5386 /* MatchPollingServiceTests.swift */,
 				80208A19F0EC592DDBEB5833 /* NotchGeometryTests.swift */,
 				FD2D42B41A31ABF136B74F9B /* NotchPanelTests.swift */,
@@ -316,6 +336,7 @@
 				2593A9F840313A4A12C2A71C /* GoalDiffDetectorTests.swift in Sources */,
 				5DFE6A42AC791435129C066E /* GoalSoundPlayerTests.swift in Sources */,
 				68A0F247E76476FA69D8FFFB /* MatchModelTests.swift in Sources */,
+				ED91996EC445EDC0AC72B7BA /* MatchOutcomeDetectorTests.swift in Sources */,
 				8D1FA29CDBA50567B8944D66 /* MatchPollingServiceTests.swift in Sources */,
 				F28465F728A09C227E1E2D02 /* NotchGeometryTests.swift in Sources */,
 				E0CB5C65751269D8FEF2F85E /* NotchPanelTests.swift in Sources */,
@@ -330,6 +351,7 @@
 				051353327674D771A71F59BB /* CompactPillView.swift in Sources */,
 				43A31ECC13523948A4C63A42 /* CrestCache.swift in Sources */,
 				9915BD288F70C9ADE22A1A8A /* CrestImageView.swift in Sources */,
+				5BBC38F3B5C972B22103B47D /* DemoESPNClient.swift in Sources */,
 				C667ABC4F16FBFF835E285CF /* ESPNClient.swift in Sources */,
 				566E335B0F433E948ABD6B4A /* ESPNEndpoints.swift in Sources */,
 				F3EEFB7737D501DD9EDA9BF8 /* ESPNScoreboardResponse.swift in Sources */,
@@ -342,6 +364,7 @@
 				C906B2924A76E615C0C7BFBD /* HoverExpandedView.swift in Sources */,
 				A56F7FBAB9C79031C0394258 /* IdleIndicatorView.swift in Sources */,
 				ED903E4ED83B38D2DF24FBCB /* Match.swift in Sources */,
+				2C4B21ABBFFB0BD436E22940 /* MatchOutcomeDetector.swift in Sources */,
 				EF975FEA2694C3B9580C5F8A /* MatchPickerRow.swift in Sources */,
 				6C345CF4351313C1F915B787 /* MatchPollingService.swift in Sources */,
 				8F6E768AF39C534CF5D40CFE /* MatchStats.swift in Sources */,
@@ -350,6 +373,7 @@
 				39CEBE39C4C37AAFC8CAD390 /* NotchRootView.swift in Sources */,
 				144F149BF328481DEA269037 /* StatsView.swift in Sources */,
 				0FF7F918B51E09AB48008739 /* Team.swift in Sources */,
+				A8724193251DCE985D508446 /* UISoundPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
