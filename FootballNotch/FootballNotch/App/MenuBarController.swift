@@ -7,19 +7,27 @@ import AppKit
 /// killall — this is that control, kept intentionally minimal (quit only;
 /// the notch panel itself is the whole UI).
 @MainActor
-final class MenuBarController {
+final class MenuBarController: NSObject {
     private let statusItem: NSStatusItem
 
-    init() {
+    override init() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        super.init()
+
+        // A plain (non-NSObject) Swift class as an NSMenuItem's target
+        // doesn't reliably participate in Cocoa's target-action dispatch,
+        // which goes through the Objective-C runtime — inheriting NSObject
+        // (above) is what makes the Quit item's target/action actually work.
         statusItem.button?.title = "⚽️"
 
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Football Notch", action: nil, keyEquivalent: ""))
-        menu.items.first?.isEnabled = false
+        let header = NSMenuItem(title: "Football Notch", action: nil, keyEquivalent: "")
+        header.isEnabled = false
+        menu.addItem(header)
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit Football Notch", action: #selector(quit), keyEquivalent: "q"))
-        menu.items.last?.target = self
+        let quitItem = NSMenuItem(title: "Quit Football Notch", action: #selector(quit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
         statusItem.menu = menu
     }
 
