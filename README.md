@@ -1,5 +1,7 @@
 # Football Notch for MacBook
 
+![Football Notch logo](Assets/1-Logo.jpeg)
+
 A native macOS menu-bar companion that turns your MacBook's notch into a
 Dynamic-Island-style overlay for live football scores: a compact pill
 showing the match you're tracking, a hover-to-expand panel with stats and a
@@ -12,6 +14,8 @@ others. ESPN's own API simply returns nothing for the World Cup outside an
 actual tournament window (there's no special date-gating logic in this app).
 
 Inspired by [this video](https://youtube.com/shorts/fas3RUgIGA4?si=OD20bPoXfSfmffOZ).
+
+![Dynamic Island preview](Assets/4-DynamicIsland%20preview.jpeg)
 
 ## Install
 
@@ -86,6 +90,8 @@ endpoints used here are public, unauthenticated, and unofficial.
 
 - **Hover the notch** to expand it and see live matches across all tracked
   competitions.
+
+  ![Match picker](Assets/2-MatchPicker.jpeg)
 - **Tap a match**, then pick which team you're supporting. That choice is
   what determines whether a goal shows a celebration or a "conceded" alert.
 - Once following a match, the pill shows `TEAM vs TEAM` on the left and the
@@ -93,10 +99,14 @@ endpoints used here are public, unauthenticated, and unofficial.
   side is hidden behind the camera housing.
 - **Hover again** any time to see match stats (possession, shots, fouls), a
   running goal log, and the picker to switch matches.
+
+  ![Match analytics](Assets/3-Analytics.jpeg)
 - Goals trigger a pop-up alert with a sound (`Hero` for your team scoring,
   `Basso` for conceding) that auto-collapses after a few seconds. The same
   sounds play for the final result when the match ends (win or loss; a draw
   is silent).
+
+  ![Goal alert](Assets/5-Goal.jpeg)
 - **To quit the app**, click the ⚽️ icon in the system menu bar and choose
   "Quit Football Notch". There's no Dock icon to right-click and no window
   to close, so this menu bar icon is the only way to stop it short of

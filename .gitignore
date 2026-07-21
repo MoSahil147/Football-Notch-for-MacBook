@@ -20,6 +20,10 @@ Package.resolved
 # macOS
 .DS_Store
 
+# Video (too large for the repo)
+*.mov
+*.MOV
+
 # Secrets / local config
 .env
 *.local.env
