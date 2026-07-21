@@ -15,13 +15,13 @@ actual tournament window (there's no special date-gating logic in this app).
 
 Inspired by [this video](https://youtube.com/shorts/fas3RUgIGA4?si=OD20bPoXfSfmffOZ).
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/MoSahil147/Football-Notch-for-MacBook)
+
 ![Dynamic Island preview](Assets/4-DynamicIsland%20preview.jpeg)
 
 ## It in action
 
 ![Football Notch working demo](Assets/demo.gif)
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/MoSahil147/Football-Notch-for-MacBook)
 
 ## Install
 
