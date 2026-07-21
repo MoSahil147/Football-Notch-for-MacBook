@@ -21,6 +21,8 @@ Inspired by [this video](https://youtube.com/shorts/fas3RUgIGA4?si=OD20bPoXfSfmf
 
 ![Football Notch working demo](Assets/demo.gif)
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/MoSahil147/Football-Notch-for-MacBook)
+
 ## Install
 
 ```bash
