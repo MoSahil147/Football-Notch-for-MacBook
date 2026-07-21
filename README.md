@@ -21,8 +21,6 @@ Inspired by [this video](https://youtube.com/shorts/fas3RUgIGA4?si=OD20bPoXfSfmf
 
 ![Football Notch working demo](Assets/demo.gif)
 
-Full-length version with sound: [Assets/demo.mp4](Assets/demo.mp4)
-
 ## Install
 
 ```bash

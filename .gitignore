@@ -20,12 +20,10 @@ Package.resolved
 # macOS
 .DS_Store
 
-# Video (too large for the repo) — except Assets/demo.mp4, the compressed
-# version actually linked from README.md
+# Video (too large for the repo)
 *.mov
 *.MOV
 *.mp4
-!Assets/demo.mp4
 Assets/For Gif/
 
 # Secrets / local config
