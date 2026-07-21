@@ -17,6 +17,12 @@ Inspired by [this video](https://youtube.com/shorts/fas3RUgIGA4?si=OD20bPoXfSfmf
 
 ![Dynamic Island preview](Assets/4-DynamicIsland%20preview.jpeg)
 
+## It in action
+
+![Football Notch working demo](Assets/demo.gif)
+
+Full-length version with sound: [Assets/demo.mp4](Assets/demo.mp4)
+
 ## Install
 
 ```bash
